@@ -26,6 +26,14 @@ namespace Core {
             writer.WriteLine("property float f_dc_0");
             writer.WriteLine("property float f_dc_1");
             writer.WriteLine("property float f_dc_2");
+            writer.WriteLine("property float opacity");
+            writer.WriteLine("property float scale_0");
+            writer.WriteLine("property float scale_1");
+            writer.WriteLine("property float scale_2");
+            writer.WriteLine("property float rot_0");
+            writer.WriteLine("property float rot_1");
+            writer.WriteLine("property float rot_2");
+            writer.WriteLine("property float rot_3");
             writer.WriteLine("end_header");
         }
 
@@ -34,9 +42,21 @@ namespace Core {
                 writer.Write(point.X);
                 writer.Write(point.Y);
                 writer.Write(point.Z);
+
                 writer.Write(point.ColorR);
                 writer.Write(point.ColorG);
                 writer.Write(point.ColorB);
+
+                writer.Write(256f);//Why "1 / (1 + Math.exp(-attrs.opacity))" ? The larger the number, the clearer the point.
+
+                writer.Write(-6f);//why "Math.exp(attrs.scale_0);" ? The smaller the number, the smaller the point.
+                writer.Write(-6f);
+                writer.Write(-6f);
+
+                writer.Write(1f);
+                writer.Write(0f);
+                writer.Write(0f);
+                writer.Write(0f);
             }
         }
     }
