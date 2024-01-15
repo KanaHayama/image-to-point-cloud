@@ -12,15 +12,18 @@ namespace ConsoleApp {
 
         private readonly IOptions<ConsoleAppOptions> _options;
 
+        private readonly Limiter _limiter;
+
         private readonly Processor _processor;
 
         private readonly Saver _saver;
 
         private readonly ILogger<Worker> _logger;
 
-        public Worker(IHostApplicationLifetime lifetime, IOptions<ConsoleAppOptions> options, Processor processor, Saver saver, ILogger<Worker> logger) {
+        public Worker(IHostApplicationLifetime lifetime, IOptions<ConsoleAppOptions> options, Limiter limiter, Processor processor, Saver saver, ILogger<Worker> logger) {
             _lifetime = lifetime;
             _options = options;
+            _limiter = limiter;
             _processor = processor;
             _saver = saver;
             _logger = logger;
@@ -38,6 +41,7 @@ namespace ConsoleApp {
                     return;
                 }
                 var image = Image.Load<Argb32>(_options.Value.Input);
+                _ = _limiter.Limit(image);
                 var pointCloud = _processor.Run(image);
                 using var stream = File.OpenWrite(_options.Value.Output);
                 _saver.Save(pointCloud, stream);
