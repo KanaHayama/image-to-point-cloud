@@ -11,19 +11,22 @@ namespace Core {
             _options = options;
         }
 
-        public PointCloud Run(Image<Rgb24> image) {
+        public PointCloud Run(Image<Argb32> image) {
             var width = image.Width;
             var height = image.Height;
             var points = new List<Point>(width * height);
-            void accessor(PixelAccessor<Rgb24> accessor) {
-                for (var y = 0; y < height; y++) {
-                    var row = accessor.GetRowSpan(y);
-                    for (var x = 0; x < width; x++) {
-                        var pixel = row[x];
+            void accessor(PixelAccessor<Argb32> accessor) {
+                for (var i = 0; i < height; i++) {
+                    var row = accessor.GetRowSpan(i);
+                    for (var j = 0; j < width; j++) {
+                        var pixel = row[j];
                         var r = pixel.R / 255f;
                         var g = pixel.G / 255f;
                         var b = pixel.B / 255f;
-                        var point = new Point(x, y, 0, r, g, b);
+                        var a = pixel.A / 255f;
+                        var x = (float)(j * _options.Value.ColumnSpacing);
+                        var y = (float)(i * _options.Value.RowSpacing);
+                        var point = new Point(x, y, 0, r, g, b, a);
                         points.Add(point);
                     }
                 }
