@@ -45,17 +45,21 @@ namespace Core {
                         var g = pixel.G / 255f;
                         var b = pixel.B / 255f;
                         var a = pixel.A / 255f;
-                        var x = (float)(j * columnSpacing) 
-                            - halfWidth 
-                            + _options.Value.TranslateX
-                            ;//Ideally Positive Right
-                        var y = (float)(i * rowSpacing) 
-                            - halfHeight
-                            + _options.Value.TranslateY
-                            ;//Ideally Positive Up, but ...
-                        var z = 0 
-                            + _options.Value.TranslateZ
-                            ;//Ideally Positive Back
+
+                        var xx = j * columnSpacing - halfWidth;//2D right
+                        var yy = i * rowSpacing - halfHeight;//2D down
+                        var zz = 0f;
+
+                        var (x, y, z) = (_options.Value.RightDirection, _options.Value.UpDirection, _options.Value.ForwardDirection) switch { //TOOD: not verified
+                            (AxisDirection.PositiveX, AxisDirection.PositiveY, AxisDirection.NegativeZ) => (xx, -yy, -zz),
+                            (AxisDirection.PositiveX, AxisDirection.NegativeY, AxisDirection.NegativeZ) => (xx, yy, -zz),
+                            _ => throw new NotImplementedException(),
+                        };
+
+                        x += _options.Value.TranslateX;
+                        y += _options.Value.TranslateY;
+                        z += _options.Value.TranslateZ;
+
                         var point = new Point(x, y, z, r, g, b, a);
                         points.Add(point);
                     }
