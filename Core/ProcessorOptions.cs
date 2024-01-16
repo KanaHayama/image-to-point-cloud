@@ -1,6 +1,6 @@
 ﻿namespace Core {
     public sealed class ProcessorOptions {
-        public double? TotalWidth { get; set; } = 1;
+        public double? TotalWidth { get; set; }
 
         public double? TotalHeight { get; set; }
 

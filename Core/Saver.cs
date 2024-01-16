@@ -23,16 +23,16 @@ namespace Core {
             WriteData(binaryWriter, pointCloud);
         }
 
-        private static void WriteHeader(StreamWriter writer, int pointCount) {
+        private void WriteHeader(StreamWriter writer, int pointCount) {
             writer.WriteLine("ply");
             writer.WriteLine("format binary_little_endian 1.0");
             writer.WriteLine("element vertex " + pointCount);
             writer.WriteLine("property float x");
             writer.WriteLine("property float y");
             writer.WriteLine("property float z");
-            writer.WriteLine("property float f_dc_0");
-            writer.WriteLine("property float f_dc_1");
-            writer.WriteLine("property float f_dc_2");
+            writer.WriteLine("property float red");
+            writer.WriteLine("property float green");
+            writer.WriteLine("property float blue");
             writer.WriteLine("property float opacity");
             writer.WriteLine("property float scale_0");
             writer.WriteLine("property float scale_1");
@@ -44,21 +44,21 @@ namespace Core {
             writer.WriteLine("end_header");
         }
 
-        private static void WriteData(BinaryWriter writer, PointCloud pointCloud) {
+        private void WriteData(BinaryWriter writer, PointCloud pointCloud) {
             foreach (var point in pointCloud) {
                 writer.Write(point.X);
                 writer.Write(point.Y);
                 writer.Write(point.Z);
 
-                writer.Write(point.ColorR);
-                writer.Write(point.ColorG);
-                writer.Write(point.ColorB);
+                writer.Write(point.ColorR * 255);//Why saving 0-255 using float?
+                writer.Write(point.ColorG * 255);
+                writer.Write(point.ColorB * 255);
 
                 writer.Write(256f);//Why "1 / (1 + Math.exp(-attrs.opacity))" ? The larger the number, the clearer the point.
 
-                writer.Write(-6f);//why "Math.exp(attrs.scale_0);" ? The smaller the number, the smaller the point.
-                writer.Write(-6f);
-                writer.Write(-6f);
+                writer.Write(_options.Value.Scale);
+                writer.Write(_options.Value.Scale);
+                writer.Write(_options.Value.Scale);
 
                 writer.Write(1f);
                 writer.Write(0f);
