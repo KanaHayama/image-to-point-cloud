@@ -9,6 +9,9 @@ namespace Core {
 
         public Processor(IOptions<ProcessorOptions> options) {
             _options = options;
+            if (_options.Value.TotalWidth is null && _options.Value.TotalHeight is null) {
+                throw new ArgumentNullException(nameof(_options.Value.TotalWidth), "TotalWidth and TotalHeight cannot be null at the same time.");
+            }
         }
 
         public PointCloud Run(Image<Argb32> image) {
@@ -16,8 +19,22 @@ namespace Core {
             var height = image.Height;
             var points = new List<Point>(width * height);
             void accessor(PixelAccessor<Argb32> accessor) {
-                var totalWidth = accessor.Width * _options.Value.ColumnSpacing;
-                var totalHeight = accessor.Height * _options.Value.RowSpacing;
+                var columnSpacing = 0f;
+                if (_options.Value.TotalWidth is { } totalWidth) {
+                    columnSpacing = width == 1 ? 0f : (float)(totalWidth / (width - 1));
+                }
+                var rowSpacing = 0f;
+                if (_options.Value.TotalHeight is { } totalHeight) {
+                    rowSpacing = height == 1 ? 0f : (float)(totalHeight / (height - 1));
+                }
+                if (_options.Value.TotalWidth is null) {
+                    columnSpacing = rowSpacing;
+                }
+                if (_options.Value.TotalHeight is null) {
+                    rowSpacing = columnSpacing;
+                }
+                totalWidth = accessor.Width * columnSpacing;
+                totalHeight = accessor.Height * rowSpacing;
                 var halfWidth = (float)(totalWidth / 2);
                 var halfHeight = (float)(totalHeight / 2);
                 for (var i = 0; i < accessor.Height; i++) {
@@ -28,11 +45,11 @@ namespace Core {
                         var g = pixel.G / 255f;
                         var b = pixel.B / 255f;
                         var a = pixel.A / 255f;
-                        var x = (float)(j * _options.Value.ColumnSpacing) 
+                        var x = (float)(j * columnSpacing) 
                             - halfWidth 
                             + _options.Value.TranslateX
                             ;//Ideally Positive Right
-                        var y = (float)(i * _options.Value.RowSpacing) 
+                        var y = (float)(i * rowSpacing) 
                             - halfHeight
                             + _options.Value.TranslateY
                             ;//Ideally Positive Up, but ...

@@ -1,9 +1,8 @@
 ﻿namespace Core {
-    public sealed class ProcessorOptions { 
+    public sealed class ProcessorOptions {
+        public double? TotalWidth { get; set; } = 1;
 
-        public double RowSpacing { get; set; } = 1;
-
-        public double ColumnSpacing { get; set; } = 1;
+        public double? TotalHeight { get; set; }
 
         public float TranslateX { get; set; }
 
