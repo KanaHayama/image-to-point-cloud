@@ -1,9 +1,16 @@
 ﻿using System.Text;
+using Microsoft.Extensions.Options;
 
 namespace Core {
     public sealed class Saver {
 
         private static readonly Encoding UTF8NoBOM = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+
+        private readonly IOptions<SaverOptions> _options;
+
+        public Saver(IOptions<SaverOptions> options) {
+            _options = options;
+        }
 
         public void Save(PointCloud pointCloud, Stream stream) {
             using var textWriter = new StreamWriter(stream, UTF8NoBOM, leaveOpen: true) { 

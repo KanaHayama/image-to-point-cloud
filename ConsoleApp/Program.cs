@@ -10,6 +10,7 @@ namespace ConsoleApp {
             builder.Services.AddTransient<Limiter>();
             builder.Services.Configure<ProcessorOptions>(builder.Configuration);
             builder.Services.AddTransient<Processor>();
+            builder.Services.Configure<SaverOptions>(builder.Configuration);
             builder.Services.AddTransient<Saver>();
             builder.Services.Configure<ConsoleAppOptions>(builder.Configuration);
             builder.Services.AddHostedService<Worker>();
