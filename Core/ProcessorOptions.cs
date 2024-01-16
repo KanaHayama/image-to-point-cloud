@@ -10,6 +10,12 @@
 
         public AxisDirection ForwardDirection { get; set; } = AxisDirection.NegativeZ;
 
+        public float RotateX { get; set; }
+
+        public float RotateY { get; set; }
+
+        public float RotateZ { get; set; }
+
         public float TranslateX { get; set; }
 
         public float TranslateY { get; set; }

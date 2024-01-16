@@ -37,6 +37,26 @@ namespace Core {
                 totalHeight = accessor.Height * rowSpacing;
                 var halfWidth = (float)(totalWidth / 2);
                 var halfHeight = (float)(totalHeight / 2);
+
+                var rotateX = _options.Value.RotateX;
+                var rotateY = _options.Value.RotateY;
+                var rotateZ = _options.Value.RotateZ;
+                var cosX = MathF.Cos(rotateX);
+                var sinX = MathF.Sin(rotateX);
+                var cosY = MathF.Cos(rotateY);
+                var sinY = MathF.Sin(rotateY);
+                var cosZ = MathF.Cos(rotateZ);
+                var sinZ = MathF.Sin(rotateZ);
+                var rotationMatrix = new float[3, 3];
+                rotationMatrix[0, 0] = cosY * cosZ;
+                rotationMatrix[0, 1] = -cosY * sinZ;
+                rotationMatrix[0, 2] = sinY;
+                rotationMatrix[1, 0] = sinX * sinY * cosZ + cosX * sinZ;
+                rotationMatrix[1, 1] = -sinX * sinY * sinZ + cosX * cosZ;
+                rotationMatrix[1, 2] = -sinX * cosY;
+                rotationMatrix[2, 0] = -cosX * sinY * cosZ + sinX * sinZ;
+                rotationMatrix[2, 1] = cosX * sinY * sinZ + sinX * cosZ;
+                rotationMatrix[2, 2] = cosX * cosY;
                 for (var i = 0; i < accessor.Height; i++) {
                     var row = accessor.GetRowSpan(i);
                     for (var j = 0; j < accessor.Width; j++) {
@@ -55,6 +75,11 @@ namespace Core {
                             (AxisDirection.PositiveX, AxisDirection.NegativeY, AxisDirection.NegativeZ) => (xx, yy, -zz),
                             _ => throw new NotImplementedException(),
                         };
+
+                        var newX = x * rotationMatrix[0, 0] + y * rotationMatrix[0, 1] + z * rotationMatrix[0, 2];
+                        var newY = x * rotationMatrix[1, 0] + y * rotationMatrix[1, 1] + z * rotationMatrix[1, 2];
+                        var newZ = x * rotationMatrix[2, 0] + y * rotationMatrix[2, 1] + z * rotationMatrix[2, 2];
+                        (x, y, z) = (newX, newY, newZ);
 
                         x += _options.Value.TranslateX;
                         y += _options.Value.TranslateY;
